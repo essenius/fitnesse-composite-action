@@ -1,23 +1,75 @@
-name: 'Hello World'
-description: 'Greet someone'
+name: 'FitNesse Test Run'
+description: 'Run a FitNesse test or suite'
 inputs:
-  who-to-greet:  # id of input
-    description: 'Who to greet'
+  test-spec:
+    description: 'Test specification'
     required: true
-    default: 'World'
-outputs:
-  random-number:
-    description: "Random number"
-    value: ${{ steps.random-number-generator.outputs.random-id }}
+    default: 'FibonacciTest?test'
+  fixture-folder:
+    description: the folder where the fixture assemblies and config,xml reside"
+    required: true
+    default: .
+  include-html:
+    description: 'Whether or not to include HTML in the test result'
+    required: false
+    default: true
+  fitnesse-port:
+    description: 'FitNesse port'
+    required: false
+    default: 8080
+  fitnesse-release:
+    description: 'FitNesse release number'
+    required: false
+    default: 20220319
+  fitsharp-release:
+    description: 'FitSharp release number'
+    required: false
+    default: 2022.3.29
 runs:
   using: "composite"
+  env:
+    FITSHARP_FOLDER:  ${{github.workspace}}/fitsharp
+    FIXTURES: ${{github.workspace}}/fixtures
+    WIKIROOT: ${{github.workspace}}/FitNesseRoot
+    TESTRESULT: ${{github.workspace}}/testresult
   steps:
-    - run: echo Hello ${{ inputs.who-to-greet }}.
+    - name: Check out the repo
+      uses: actions/checkout@v3
+    - name: Download FitNesse
       shell: bash
-    - id: random-number-generator
-      run: echo "::set-output name=random-id::$(echo $RANDOM)"
+      run: curl -o ${{github.workspace}}/fitnesse.jar "http://www.fitnesse.org/fitnesse-standalone.jar?responder=releaseDownload&release=${{inputs.fitnesse-release}}"
+    - name: Configure dotnet
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: '5.0.x'
+    - name: Download FitSharp
       shell: bash
-    - run: echo "${{ github.action_path }}" >> $GITHUB_PATH
-      shell: bash          
-    - run: goodbye.sh
+      run: |
+        cd ${{runner.temp}}
+        dotnet new classlib
+        dotnet add package fitsharp --version ${{inputs.fitsharp-release}} --package-directory .
+        cp -R fitsharp/${{inputs.fitsharp-release}}/lib ${{env.FITSHARP_FOLDER}}
+        rm -rf ./*
+    - name: Run test
       shell: bash
+      run: |
+        mkdir -p ${{env.TESTRESULT}}
+        cd ${{inputs.fixture-folder}}
+        includeHtml=""
+        if [ "${{inputs.include-html}}" == true ]; then
+          includeHtml="&includeHtmlSpec"
+        fi
+        java -jar ${{github.workspace}}/fitnesse.jar -p ${{inputs.fitnesse-port}} -d ${{github.workspace}} -e 0 -o -c "${{inputs.test-spec}}&format=xml&nochunk$includeHtml" 1>${{env.TESTRESULT}}/result.xml 2>${{env.TESTRESULT}}/error.log
+
+    - name: Convert Test Output
+      shell: bash
+      if: always()
+      run: |
+          ls -lsaR
+          pwsh ${{github.workspace}}/FitNesseConvert/run.ps1
+    - name: Upload result
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: test-result
+        path: ${{env.TESTRESULT}}
