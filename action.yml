@@ -34,7 +34,7 @@ runs:
   steps:
     - name: Check out the repo
       uses: actions/checkout@v3
-      path: ./composite
+      path: ./composite/
     - name: Download FitNesse
       shell: bash
       run: curl -o ${{github.workspace}}/fitnesse.jar "http://www.fitnesse.org/fitnesse-standalone.jar?responder=releaseDownload&release=${{inputs.fitnesse-release}}"
@@ -68,7 +68,7 @@ runs:
         cd ${{github.workspace}}
     - name: Convert Test Output
       shell: pwsh
-      working=directory" ./composite
+      working=directory: ./composite/
       if: always()
       run: run.ps1
     - name: Upload result
