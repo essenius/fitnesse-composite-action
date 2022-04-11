@@ -43,10 +43,13 @@ runs:
     - name: Download FitSharp
       shell: bash
       run: |
+       echo FitSharp: ${{env:FITSHARP_FOLDER}}
+        mkdir -p ${{env.FITSHARP_FOLDER}}
         cd ${{runner.temp}}
         dotnet new classlib
         dotnet add package fitsharp --version ${{inputs.fitsharp-release}} --package-directory .
         cp -R fitsharp/${{inputs.fitsharp-release}}/lib ${{env.FITSHARP_FOLDER}}
+        ls -lsR /home
         rm -rf ./*
     - name: Run test
       shell: bash
@@ -60,11 +63,9 @@ runs:
         java -jar ${{github.workspace}}/fitnesse.jar -p ${{inputs.fitnesse-port}} -d ${{github.workspace}} -e 0 -o -c "${{inputs.test-spec}}&format=xml&nochunk$includeHtml" 1>${{env.TESTRESULT}}/result.xml 2>${{env.TESTRESULT}}/error.log
 
     - name: Convert Test Output
-      shell: bash
+      shell: pwsh
       if: always()
-      run: |
-          ls -lsaR
-          pwsh ${{github.workspace}}/FitNesseConvert/run.ps1
+      run: ${{github.workspace}}/FitNesseConvert/run.ps1
     - name: Upload result
       if: always()
       uses: actions/upload-artifact@v3
