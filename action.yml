@@ -28,7 +28,7 @@ inputs:
 runs:
   using: "composite"
   steps:
-      env:
+    - env:
         FITSHARP_FOLDER: ${{github.workspace}}/fitsharp
         TESTRESULT: ${{github.workspace}}/testresult
     - name: Check out the repo
