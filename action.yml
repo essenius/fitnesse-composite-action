@@ -61,11 +61,10 @@ runs:
         if [ "${{inputs.include-html}}" == true ]; then
           includeHtml="&includeHtmlSpec"
         fi
-        java -jar ${{github.workspace}}/fitnesse.jar -p ${{inputs.fitnesse-port}} -d ${{github.workspace}} -e 0 -o -c "${{inputs.test-spec}}&format=xml&nochunk$includeHtml" 1>${{inputs.test-result}}/result.xml 2>${{env.TESTRESULT}}/error.log
+        java -jar ${{github.workspace}}/fitnesse.jar -p ${{inputs.fitnesse-port}} -d ${{github.workspace}} -e 0 -o -c "${{inputs.test-spec}}&format=xml&nochunk$includeHtml" 1>${{inputs.test-result}}/result.xml 2>${{inputs.test-result}}/error.log
         cd ${{github.workspace}}
     - name: Convert Test Output
       shell: pwsh
-      working-directory: ./composite/
       if: always()
       run: run.ps1
     - name: Upload result
