@@ -1,1 +1,1 @@
-"See you!" 
+echo "See you!" 
