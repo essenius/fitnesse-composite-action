@@ -25,13 +25,14 @@ inputs:
     description: 'FitSharp release number'
     required: false
     default: 2022.3.29
+  test-result:
+    description: 'Folder of test results'
+    required: false
+    default: ${{github.workspace}}/testresult
 runs:
   using: "composite"
   steps:
     - name: Check out the repo
-      env:
-        FITSHARP_FOLDER: ${{github.workspace}}/fitsharp
-        TESTRESULT: ${{github.workspace}}/testresult
       uses: actions/checkout@v3
     - name: Download FitNesse
       shell: bash
@@ -42,6 +43,8 @@ runs:
         dotnet-version: '5.0.x'
     - name: Download FitSharp
       shell: bash
+      env:
+        FITSHARP_FOLDER: ${{github.workspace}}/fitsharp
       run: |
         echo FitSharp: ${{env.FITSHARP_FOLDER}}
         mkdir -p ${{env.FITSHARP_FOLDER}}
@@ -54,21 +57,21 @@ runs:
     - name: Run test
       shell: bash
       run: |
-        mkdir -p ${{env.TESTRESULT}}
+        mkdir -p ${{inputs.test-result}}
         cd ${{inputs.fixture-folder}}
         includeHtml=""
         if [ "${{inputs.include-html}}" == true ]; then
           includeHtml="&includeHtmlSpec"
         fi
         java -jar ${{github.workspace}}/fitnesse.jar -p ${{inputs.fitnesse-port}} -d ${{github.workspace}} -e 0 -o -c "${{inputs.test-spec}}&format=xml&nochunk$includeHtml" 1>${{env.TESTRESULT}}/result.xml 2>${{env.TESTRESULT}}/error.log
-
+        cd ${{github.workspace}}
     - name: Convert Test Output
       shell: pwsh
       if: always()
-      run: ${{github.workspace}}/FitNesseConvert/run.ps1
+      run: run.ps1
     - name: Upload result
       if: always()
       uses: actions/upload-artifact@v3
       with:
         name: test-result
-        path: ${{env.TESTRESULT}}
+        path: ${{inputs.test-result}}
