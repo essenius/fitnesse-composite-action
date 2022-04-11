@@ -43,7 +43,7 @@ runs:
     - name: Download FitSharp
       shell: bash
       run: |
-       echo FitSharp: ${{env:FITSHARP_FOLDER}}
+        echo FitSharp: ${{env.FITSHARP_FOLDER}}
         mkdir -p ${{env.FITSHARP_FOLDER}}
         cd ${{runner.temp}}
         dotnet new classlib
