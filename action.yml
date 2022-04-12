@@ -56,7 +56,7 @@ runs:
       shell: bash
       env:
         # tried doing this via $GITHUB_ENV but could not get that to work
-        FITSHARP_FOLDER: ${{inputs.fitsharp-folder}}/net5.0
+        FITSHARP_FOLDER: ${{inputs.fitsharp-folder}}
       run: |
         ls -lsR ${{env.FITSHARP_FOLDER}}
         echo FitSharp: ${{env.FITSHARP_FOLDER}}
