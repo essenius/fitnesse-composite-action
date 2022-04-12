@@ -41,16 +41,15 @@ runs:
         dotnet-version: '5.0.x'
     - name: Download FitSharp
       shell: bash
-      env:
-        FITSHARP_FOLDER: ${{github.workspace}}/fitsharp
       run: |
-        echo "FITSHARP_FOLDER=${{env.FITSHARP_FOLDER}}" >> $GITHUB_ENV
-        echo FitSharp: ${{env.FITSHARP_FOLDER}}
-        mkdir -p ${{env.FITSHARP_FOLDER}}
+        $FITSHARP_FOLDER="${{github.workspace}}/fitsharp"
+        echo "FITSHARP_FOLDER=${FITSHARP_FOLDER}" >> $GITHUB_ENV
+        echo FitSharp: ${FITSHARP_FOLDER}
+        mkdir -p ${{FITSHARP_FOLDER}}
         cd ${{runner.temp}}
         dotnet new classlib
         dotnet add package fitsharp --version ${{inputs.fitsharp-release}} --package-directory .
-        cp -R fitsharp/${{inputs.fitsharp-release}}/lib ${{env.FITSHARP_FOLDER}}
+        cp -R fitsharp/${{inputs.fitsharp-release}}/lib ${FITSHARP_FOLDER}
         ls -lsR /home/runner/work/_actions/essenius/fitnesse-composite-action
         rm -rf ./*
     - name: Run test
