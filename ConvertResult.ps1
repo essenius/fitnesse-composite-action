@@ -5,6 +5,9 @@ Import-Module -Name "$PSScriptRoot/FitNesseConvert.psm1"
 $rawResultsPath = "result.xml"
 $content = Get-Content -Path "$rawResultsPath"
 [xml]$testResult = [xml](Read-Xml -RawInput $content)
+if (!$testResult) { 
+    throw "No XML output detected" 
+}
 $details = (Convert-Xml -InputXml $testResult -XsltFile "FitNesseToDetailedResults.xslt")
 $detailsPath = "DetailedResults.html"
 $details | Out-File -FilePath $detailsPath | Out-Null

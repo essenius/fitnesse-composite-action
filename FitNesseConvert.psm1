@@ -87,18 +87,6 @@ function Edit-Environment([xml]$NUnitXml) {
 	return $NUnitXml.OuterXml
 }
 
-# Extract the XML or HTML section from a string (ignore headers etc.)
-function Read-Xml([string]$RawInput) {
-	$ordinal = [System.StringComparison]::Ordinal
-	$startLocation = $RawInput.IndexOf("<?xml", $ordinal);
-	$endLocation = $RawInput.LastIndexOf(">", $ordinal) + 1;
-	If (($startLocation -eq -1) -or ($endLocation -eq 0)) { return "" }
-	$result = $RawInput.Substring($startLocation, $endLocation - $startLocation)
-	return $result
-}
-	
-
-
 function GetPlatform() {
 	$platform = (
 		(!(Test-Path -Path "variable:IsWindows"), "Windows"),
@@ -123,6 +111,16 @@ function GetVersionInfo([string]$Assembly) {
 
 function JoinThisPath([string]$ChildPath) { 
     return (Join-Path -Path $PSScriptRoot -ChildPath $ChildPath) 
+}
+
+# Extract the XML or HTML section from a string (ignore headers etc.)
+function Read-Xml([string]$RawInput) {
+	$ordinal = [System.StringComparison]::Ordinal
+	$startLocation = $RawInput.IndexOf("<?xml", $ordinal);
+	$endLocation = $RawInput.LastIndexOf(">", $ordinal) + 1;
+	If (($startLocation -eq -1) -or ($endLocation -eq 0)) { return "" }
+	$result = $RawInput.Substring($startLocation, $endLocation - $startLocation)
+	return $result
 }
 
 function Test-AllTestsPassed([string]$FitNesseResults) {

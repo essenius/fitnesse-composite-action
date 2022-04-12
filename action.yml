@@ -29,10 +29,14 @@ inputs:
     description: 'FitSharp Folder'
     required: false
     default: ${{github.workspace}}/fitsharp
-  test-result:
+  test-result-folder:
     description: 'Folder of test results'
     required: false
     default: ${{github.workspace}}/testresult
+  test-result-artifact:
+    description: 'Name of the test result artifact'
+    required: false
+    default: 'test-result'
 runs:
   using: "composite"
   steps:
@@ -55,22 +59,22 @@ runs:
         # tried doing this via $GITHUB_ENV but could not get that to work
         FITSHARP_FOLDER: ${{inputs.fitsharp-folder}}
       run: |
-        mkdir -p ${{inputs.test-result}}
+        mkdir -p ${{inputs.test-result-folder}}
         cd ${{inputs.fixture-folder}}
         includeHtml=""
         if [ "${{inputs.include-html}}" == true ]; then
           includeHtml="&includehtml"
         fi
-        java -jar ${{github.workspace}}/fitnesse.jar -p ${{inputs.fitnesse-port}} -d ${{github.workspace}} -e 0 -o -c "${{inputs.test-spec}}&format=xml&nochunk$includeHtml" 1>${{inputs.test-result}}/result.xml 2>${{inputs.test-result}}/error.log
+        java -jar ${{github.workspace}}/fitnesse.jar -p ${{inputs.fitnesse-port}} -d ${{github.workspace}} -e 0 -o -c "${{inputs.test-spec}}&format=xml&nochunk$includeHtml" 1>${{inputs.test-result-folder}}/result.xml 2>${{inputs.test-result-folder}}/error.log
         cd ${{github.workspace}}
     - name: Convert Test Output
       shell: pwsh
-      working-directory: ${{inputs.test-result}}
+      working-directory: ${{inputs.test-result-folder}}
       if: always()
       run: ${{ github.action_path }}/ConvertResult.ps1
     - name: Upload result
       if: always()
       uses: actions/upload-artifact@v3
       with:
-        name: test-result
-        path: ${{inputs.test-result}}
+        name: ${{inputs.test-result-artifact}}
+        path: ${{inputs.test-result-folder}}
