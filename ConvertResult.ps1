@@ -6,7 +6,7 @@ $rawResultsPath = "result.xml"
 $content = Get-Content -Path "$rawResultsPath"
 [xml]$testResult = [xml](Read-Xml -RawInput $content)
 if (!$testResult.InnerXml) { 
-    throw "No XML output detected" 
+    throw "No XML output detected. This could happen when the test page was not found. Check the error log." 
 }
 $details = (Convert-Xml -InputXml $testResult -XsltFile "FitNesseToDetailedResults.xslt")
 $detailsPath = "DetailedResults.html"
