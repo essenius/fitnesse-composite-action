@@ -39,10 +39,10 @@ runs:
     - name: Download FitNesse
       shell: bash
       run: curl -o ${{github.workspace}}/fitnesse.jar "http://www.fitnesse.org/fitnesse-standalone.jar?responder=releaseDownload&release=${{inputs.fitnesse-release}}"
-    - name: Configure dotnet
-      uses: actions/setup-dotnet@v2
-      with:
-        dotnet-version: '5.0.x'
+#    - name: Configure dotnet
+#      uses: actions/setup-dotnet@v2
+#      with:
+#        dotnet-version: '5.0.x'
     - name: Download FitSharp
       shell: bash
       run: |
@@ -58,8 +58,6 @@ runs:
         # tried doing this via $GITHUB_ENV but could not get that to work
         FITSHARP_FOLDER: ${{inputs.fitsharp-folder}}
       run: |
-        ls -lsR ${{env.FITSHARP_FOLDER}}
-        echo FitSharp: ${{env.FITSHARP_FOLDER}}
         mkdir -p ${{inputs.test-result}}
         cd ${{inputs.fixture-folder}}
         includeHtml=""
