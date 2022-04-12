@@ -121,7 +121,7 @@
     <xsl:param name="pageName" />
     <xsl:choose>
       <xsl:when test="pageHistoryLink">
-        <xsl:value-of select="substring-after(substring-before(pageHistoryLink,'?'),concat($pageName,'.'))"/>
+        <xsl:value-of select="substring-before(pageHistoryLink,'?')"/>
       </xsl:when>
       <xsl:otherwise>
         <xsl:value-of select="relativePageName"/>
