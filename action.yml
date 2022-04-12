@@ -25,6 +25,10 @@ inputs:
     description: 'FitSharp release number'
     required: false
     default: 2022.3.29
+  fitsharp-folder:
+    description: 'FitSharp Folder'
+    required: false
+    default: ${{github.workspace}}/fitsharp
   test-result:
     description: 'Folder of test results'
     required: false
@@ -42,15 +46,12 @@ runs:
     - name: Download FitSharp
       shell: bash
       run: |
-        FITSHARP_FOLDER="${{github.workspace}}/fitsharp"
-        echo "FITSHARP_FOLDER=${FITSHARP_FOLDER}" >> $GITHUB_ENV
-        echo FitSharp: ${FITSHARP_FOLDER}
-        mkdir -p ${{FITSHARP_FOLDER}}
+        echo "FITSHARP_FOLDER=${{inputs.fitsharp-folder}}" >> $GITHUB_ENV
+        mkdir -p ${{inputs.fitsharp-folder}}
         cd ${{runner.temp}}
         dotnet new classlib
         dotnet add package fitsharp --version ${{inputs.fitsharp-release}} --package-directory .
-        cp -R fitsharp/${{inputs.fitsharp-release}}/lib ${FITSHARP_FOLDER}
-        ls -lsR /home/runner/work/_actions/essenius/fitnesse-composite-action
+        cp -R fitsharp/${{inputs.fitsharp-release}}/lib ${{inputs.fitsharp-folder}}
         rm -rf ./*
     - name: Run test
       shell: bash
