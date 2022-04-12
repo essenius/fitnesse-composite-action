@@ -46,7 +46,6 @@ runs:
     - name: Download FitSharp
       shell: bash
       run: |
-        echo "FITSHARP_FOLDER=${{inputs.fitsharp-folder}}" >> $GITHUB_ENV
         mkdir -p ${{inputs.fitsharp-folder}}
         cd ${{runner.temp}}
         dotnet new classlib
@@ -55,6 +54,9 @@ runs:
         rm -rf ./*
     - name: Run test
       shell: bash
+      env:
+        # tried doing this via $GITHUB_ENV but could not get that to work
+        FITSHARP_FOLDER: ${{inputs.fitsharp-folder}}
       run: |
         echo FitSharp: ${{env.FITSHARP_FOLDER}}
         mkdir -p ${{inputs.test-result}}
