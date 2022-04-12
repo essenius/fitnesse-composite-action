@@ -67,7 +67,7 @@ runs:
       shell: pwsh
       working-directory: ${{inputs.test-result}}
       if: always()
-      run: ${{ github.action_path }}/run.ps1
+      run: ${{ github.action_path }}/ConvertResult.ps1
     - name: Upload result
       if: always()
       uses: actions/upload-artifact@v3
