@@ -44,6 +44,7 @@ runs:
       env:
         FITSHARP_FOLDER: ${{github.workspace}}/fitsharp
       run: |
+        echo "FITSHARP_FOLDER=${{env.FITSHARP_FOLDER}}" >> $GITHUB_ENV
         echo FitSharp: ${{env.FITSHARP_FOLDER}}
         mkdir -p ${{env.FITSHARP_FOLDER}}
         cd ${{runner.temp}}
