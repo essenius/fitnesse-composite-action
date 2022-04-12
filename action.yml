@@ -50,7 +50,7 @@ runs:
         dotnet new classlib
         dotnet add package fitsharp --version ${{inputs.fitsharp-release}} --package-directory .
         cp -R fitsharp/${{inputs.fitsharp-release}}/lib ${{env.FITSHARP_FOLDER}}
-        ls -lsR ${{github.workspace}}
+        ls -lsR /home/runner/work/_actions/essenius/fitnesse-composite-action
         rm -rf ./*
     - name: Run test
       shell: bash
@@ -65,6 +65,7 @@ runs:
         cd ${{github.workspace}}
     - name: Convert Test Output
       shell: pwsh
+      working-directory: ${{inputs.test-result}}
       if: always()
       run: ${{ github.action_path }}/run.ps1
     - name: Upload result
