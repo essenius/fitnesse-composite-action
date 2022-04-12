@@ -50,14 +50,15 @@ runs:
         cd ${{runner.temp}}
         dotnet new classlib
         dotnet add package fitsharp --version ${{inputs.fitsharp-release}} --package-directory .
-        cp -R fitsharp/${{inputs.fitsharp-release}}/lib ${{inputs.fitsharp-folder}}
+        cp -R fitsharp/${{inputs.fitsharp-release}}/lib/* ${{inputs.fitsharp-folder}}
         rm -rf ./*
     - name: Run test
       shell: bash
       env:
         # tried doing this via $GITHUB_ENV but could not get that to work
-        FITSHARP_FOLDER: ${{inputs.fitsharp-folder}}
+        FITSHARP_FOLDER: ${{inputs.fitsharp-folder}}/net5.0
       run: |
+        ls -lsR ${{env.FITSHARP_FOLDER}}
         echo FitSharp: ${{env.FITSHARP_FOLDER}}
         mkdir -p ${{inputs.test-result}}
         cd ${{inputs.fixture-folder}}
