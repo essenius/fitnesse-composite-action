@@ -10,8 +10,8 @@ It does the following:
 
 Available parameters:
 * Required:
-  * test-spec: the test/suite to run in the format that FitNesse uses (e.g. GameManagementSuite?suite)
-  * fixture-folder: the location where the FitSharp foxtures and config.xml are expected
+  * test-spec: the test/suite to run in the format that FitNesse uses (e.g. `GameManagementSuite?suite`)
+  * fixture-folder: the location where the FitSharp foxture assemblies and config.xml are expected. Typical is `${{github.workspace}}/fixtures`
 * Optional:
   * include-html: whether or not to include the test details in suites (otherwise it returns page summaries only). Default is `true`
   * fitnesse-port: the port that the FitNesse wiki runs at. Default is `8080` and it's probably not very often needed to change this
