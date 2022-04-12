@@ -19,3 +19,9 @@ Available parameters:
   * fitsharp-release: the FitSharp release to use. Default is `2022.3.29`
   * fitsharp-folder: the foilder where FitSharp needs to end up. Default is  `${{github.workspace}}/fitsharp`
   * test-result: the folder where the test result needs to end up. Default is `${{github.workspace}}/testresult`
+
+## Example
+For an example of how to use this composite action see the [FitNesseAction](../../../FitNesseAction) repo.
+
+## Contribute
+Enter an [issue](../../issues) or provide a [pull request](../../pulls). 
