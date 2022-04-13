@@ -46,6 +46,7 @@ runs:
     #  assumes that dotnet is already there
     - name: Download FitSharp
       shell: bash
+      if: ${{inputs.fitsharp-release}} != ""
       run: |
         mkdir -p ${{inputs.fitsharp-folder}}
         cd ${{runner.temp}}
