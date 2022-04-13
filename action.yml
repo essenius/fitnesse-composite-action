@@ -21,6 +21,10 @@ inputs:
     description: 'FitNesse release number'
     required: false
     default: 20220319
+  fitnesse-folder:
+    description: 'Main FitNesse folder'
+    required: false
+    default: ${{github.workspace}}
   fitsharp-release:
     description: 'FitSharp release number'
     required: false
@@ -42,7 +46,7 @@ runs:
   steps:
     - name: Download FitNesse
       shell: bash
-      run: curl -o ${{github.workspace}}/fitnesse.jar "http://www.fitnesse.org/fitnesse-standalone.jar?responder=releaseDownload&release=${{inputs.fitnesse-release}}"
+      run: curl -o ${{inputs.fitnesse-folder}}/fitnesse.jar "http://www.fitnesse.org/fitnesse-standalone.jar?responder=releaseDownload&release=${{inputs.fitnesse-release}}"
     #  assumes that dotnet is already there
     - name: Download FitSharp
       shell: bash
@@ -66,7 +70,7 @@ runs:
         if [ "${{inputs.include-html}}" == true ]; then
           includeHtml="&includehtml"
         fi
-        java -jar ${{github.workspace}}/fitnesse.jar -p ${{inputs.fitnesse-port}} -d ${{github.workspace}} -e 0 -o -c "${{inputs.test-spec}}&format=xml&nochunk$includeHtml" 1>${{inputs.test-result-folder}}/result.xml 2>${{inputs.test-result-folder}}/error.log
+        java -jar ${{inputs.fitnesse-folder}}/fitnesse.jar -p ${{inputs.fitnesse-port}} -d ${{inputs.fitnesse-folder}} -e 0 -o -c "${{inputs.test-spec}}&format=xml&nochunk$includeHtml" 1>${{inputs.test-result-folder}}/result.xml 2>${{inputs.test-result-folder}}/error.log
         cd ${{github.workspace}}
     - name: Convert Test Output
       shell: pwsh
