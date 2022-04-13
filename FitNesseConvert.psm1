@@ -101,6 +101,9 @@ function GetPlatform() {
 }
 
 function GetVersionInfo([string]$Assembly) {
+	if (!$Assembly) { 
+		return "" 
+	}
 	$assemblyItem = Get-Item $Assembly -ErrorAction SilentlyContinue
 	if (!$assemblyItem) { $assemblyItem = Get-Command -Name $Assembly -ErrorAction SilentlyContinue | Get-Item -ErrorAction SilentlyContinue}
 	if ($assemblyItem.VersionInfo.ProductName) {
