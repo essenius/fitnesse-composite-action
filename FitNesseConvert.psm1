@@ -43,7 +43,7 @@ function Convert-Xml([xml]$InputXml, [string]$XsltFile, [string]$Now = (Get-Date
 		$xslArguments.AddExtensionObject("XsltFunctions", [XsltFunctions]::new())
         $xslArguments.AddParam("Now", "", $Now);
 		$xslt.Transform($InputXml, $xslArguments, $target)
-        $target.Position = $testResultsPath0
+        $target.Position = 0
 		return $reader.ReadToEnd()
     } Finally {
 		$reader.Close()
@@ -69,7 +69,7 @@ function Edit-Environment([xml]$NUnitXml) {
 	$command=$NUnitXml.SelectSingleNode("test-run/command-line").'#cdata-section' 
 	SetFitSharpVersion -Command $command
 	if ($Env:TEST_FITSHARP_VERSION) {
-		$environment.SetAttribute("framework-version", $versionInfo)
+		$environment.SetAttribute("framework-version", $Env:TEST_FITSHARP_VERSION)
 	}
 
 	SetTestEnvironmentVariables
