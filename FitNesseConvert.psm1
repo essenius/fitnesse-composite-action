@@ -49,6 +49,7 @@ function Convert-Xml([xml]$InputXml, [string]$XsltFile, [string]$Now = (Get-Date
 		$reader.Close()
         $target.Close()
     }
+	gci Env:
 }
 
 function Edit-Attachments([xml]$NUnitXml, [string]$RawResults, [string]$Details) {
@@ -62,27 +63,27 @@ function Edit-Attachments([xml]$NUnitXml, [string]$RawResults, [string]$Details)
 }
 
 function Edit-Environment([xml]$NUnitXml) {
-	$env = $NUnitXml.SelectSingleNode("test-run/test-suite/environment")
+	$environment = $NUnitXml.SelectSingleNode("test-run/test-suite/environment")
 	if (!($env)) { return $NUnitXml.OuterXml }
 
 	$command=$NUnitXml.SelectSingleNode("test-run/command-line").'#cdata-section' 
 	SetFitSharpVersion -Command $command
 	if ($Env:TEST_FITSHARP_VERSION) {
-		$env.SetAttribute("framework-version", $versionInfo)
+		$environment.SetAttribute("framework-version", $versionInfo)
 	}
 
 	SetTestEnvironmentVariables
 
-	$env.SetAttribute("os-architecture", "$Env:TEST_OS $Env:TEST_OS_ARCHITECTURE")
-	$env.SetAttribute("os-version", $Env:TEST_OS_VERSION)
+	$environment.SetAttribute("os-architecture", "$Env:TEST_OS $Env:TEST_OS_ARCHITECTURE")
+	$environment.SetAttribute("os-version", $Env:TEST_OS_VERSION)
 	# AzDev can't deal with the platform attribute.
 	# $env.SetAttribute("platform", $os.Caption)
-	$env.SetAttribute("cwd", ".")
-	$env.SetAttribute("machine-name", $Env:TEST_HOSTNAME)
-	$env.SetAttribute("user", $Env:TEST_USER)
-	$env.SetAttribute("user-domain", $Env:TEST_HOSTNAME)
-	$env.SetAttribute("culture", (Get-Culture).Name)
-	$env.SetAttribute("uiculture", (Get-UICulture).Name)
+	$environment.SetAttribute("cwd", ".")
+	$environment.SetAttribute("machine-name", $Env:TEST_HOSTNAME)
+	$environment.SetAttribute("user", $Env:TEST_USER)
+	$environment.SetAttribute("user-domain", $Env:TEST_HOSTNAME)
+	$environment.SetAttribute("culture", (Get-Culture).Name)
+	$environment.SetAttribute("uiculture", (Get-UICulture).Name)
 	return $NUnitXml.OuterXml
 }
 
