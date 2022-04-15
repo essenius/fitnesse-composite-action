@@ -64,7 +64,7 @@ function Edit-Attachments([xml]$NUnitXml, [string]$RawResults, [string]$Details)
 
 function Edit-Environment([xml]$NUnitXml) {
 	$environment = $NUnitXml.SelectSingleNode("test-run/test-suite/environment")
-	if (!($env)) { return $NUnitXml.OuterXml }
+	if (!($environment)) { return $NUnitXml.OuterXml }
 
 	$command=$NUnitXml.SelectSingleNode("test-run/command-line").'#cdata-section' 
 	SetFitSharpVersion -Command $command
