@@ -144,16 +144,16 @@ function SetTestEnvironmentVariables() {
 		Set-EnvironmentVariable -Key "TEST_OS" -Value (GetPlatform) 
 	}
 	if (!$Env:TEST_OS_ARCHITECTURE) {
-		Set-EnvironmentVariable -Key "TEST_OS_ARCHITECTURE" -Value " $([System.IntPtr]::Size * 8)-bit" 
+		Set-EnvironmentVariable -Key "TEST_OS_ARCHITECTURE" -Value "$([System.IntPtr]::Size * 8)-bit" 
 	}
 	if (!$Env:TEST_OS_VERSION) {
-		Set-EnvironmentVariable -Key "TEST_OS_VERSION" -Value [Environment]::OSVersion.Version 
+		Set-EnvironmentVariable -Key "TEST_OS_VERSION" -Value "$([Environment]::OSVersion.Version)"
 	}
 	if (!$Env:TEST_HOSTNAME) {
-		Set-EnvironmentVariable -Key "TEST_HOSTNAME" -Value [Environment]::MachineName 
+		Set-EnvironmentVariable -Key "TEST_HOSTNAME" -Value "$([Environment]::MachineName)"
 	}
 	if (!$Env:TEST_USER) {
-		Set-EnvironmentVariable -Key "TEST_USER" -Value [Environment]::UserName 
+		Set-EnvironmentVariable -Key "TEST_USER" -Value "$([Environment]::UserName)"
 	}
 }
 
