@@ -49,7 +49,6 @@ function Convert-Xml([xml]$InputXml, [string]$XsltFile, [string]$Now = (Get-Date
 		$reader.Close()
         $target.Close()
     }
-	gci Env:
 }
 
 function Edit-Attachments([xml]$NUnitXml, [string]$RawResults, [string]$Details) {
@@ -133,7 +132,6 @@ function Set-EnvironmentVariable([string]$Key, [string]$Value) {
 function SetFitSharpVersion([string]$Command) {
 	if (!$Env:TEST_FITSHARP_VERSION) {
 		if ($Command) {
-			Write-Host "Cmd: $command"
 			$assembly = $Command.Split(" ") | Where-Object { $_ -match "Runner\."}
 			Set-EnvironmentVariable -Key "TEST_FITSHARP_VERSION" -Value (GetVersionInfo -Assembly $assembly)
 		}
