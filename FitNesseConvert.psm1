@@ -64,24 +64,23 @@ function Edit-Attachments([xml]$NUnitXml, [string]$RawResults, [string]$Details)
 function Edit-Environment([xml]$NUnitXml) {
 	$env = $NUnitXml.SelectSingleNode("test-run/test-suite/environment")
 	if (!($env)) { return $NUnitXml.OuterXml }
+
 	$command=$NUnitXml.SelectSingleNode("test-run/command-line").'#cdata-section' 
-	if ($command) {
-		Write-Host "Cmd: $command"
-		$assembly = $command.Split(" ") | Where-Object { $_ -match "Runner\."}
-		$versionInfo = GetVersionInfo -Assembly $assembly
-		if ($versionInfo) {
-			$env.SetAttribute("framework-version", $versionInfo)
-		}
+	SetFitSharpVersion -Command $command
+	if ($Env:TEST_FITSHARP_VERSION) {
+		$env.SetAttribute("framework-version", $versionInfo)
 	}
-	$os = (GetPlatform) + " $([System.IntPtr]::Size * 8)-bit"
-	$env.SetAttribute("os-architecture", $os)
-	$env.SetAttribute("os-version", [Environment]::OSVersion.Version)
+
+	SetTestEnvironmentVariables
+
+	$env.SetAttribute("os-architecture", "$Env:TEST_OS $Env:TEST_OS_ARCHITECTURE")
+	$env.SetAttribute("os-version", $Env:TEST_OS_VERSION)
 	# AzDev can't deal with the platform attribute.
 	# $env.SetAttribute("platform", $os.Caption)
 	$env.SetAttribute("cwd", ".")
-	$env.SetAttribute("machine-name", [Environment]::MachineName)
-	$env.SetAttribute("user", [Environment]::UserName)
-	$env.SetAttribute("user-domain", [Environment]::UserDomainName)
+	$env.SetAttribute("machine-name", $Env:TEST_HOSTNAME)
+	$env.SetAttribute("user", $Env:TEST_USER)
+	$env.SetAttribute("user-domain", $Env:TEST_HOSTNAME)
 	$env.SetAttribute("culture", (Get-Culture).Name)
 	$env.SetAttribute("uiculture", (Get-UICulture).Name)
 	return $NUnitXml.OuterXml
@@ -126,13 +125,36 @@ function Read-Xml([string]$RawInput) {
 	return $result
 }
 
-function Test-AllTestsPassed([string]$FitNesseResults) {
-	$counts = ([xml]$FitNesseResults).testResults.finalCounts
-	return (([int]$counts.wrong + [int]$counts.exceptions) -eq 0) -and ([int]$counts.right -gt 0)
+function Set-EnvironmentVariable([string]$Key, [string]$Value) {
+	[Environment]::SetEnvironmentVariable($Key, $Value)
 }
 
-function Test-MissedError([xml]$FitNesseResults) {
-	return (!$FitNesseResults.testResults.result) -and (!$FitNesseResults.testResults.executionLog.exception)
+function SetFitSharpVersion([string]$Command) {
+	if (!$Env:TEST_FITSHARP_VERSION) {
+		if ($Command) {
+			Write-Host "Cmd: $command"
+			$assembly = $Command.Split(" ") | Where-Object { $_ -match "Runner\."}
+			Set-EnvironmentVariable -Key "TEST_FITSHARP_VERSION" -Value (GetVersionInfo -Assembly $assembly)
+		}
+	}
+}
+
+function SetTestEnvironmentVariables() {
+	if (!$Env:TEST_OS) {
+		Set-EnvironmentVariable -Key "TEST_OS" -Value (GetPlatform) 
+	}
+	if (!$Env:TEST_OS_ARCHITECTURE) {
+		Set-EnvironmentVariable -Key "TEST_OS_ARCHITECTURE" -Value " $([System.IntPtr]::Size * 8)-bit" 
+	}
+	if (!$Env:TEST_OS_VERSION) {
+		Set-EnvironmentVariable -Key "TEST_OS_VERSION" -Value [Environment]::OSVersion.Version 
+	}
+	if (!$Env:TEST_HOSTNAME) {
+		Set-EnvironmentVariable -Key "TEST_HOSTNAME" -Value [Environment]::MachineName 
+	}
+	if (!$Env:TEST_USER) {
+		Set-EnvironmentVariable -Key "TEST_USER" -Value [Environment]::UserName 
+	}
 }
 
 function Save-ExceptionMessage([xml]$FitNesseResults, [string]$Message, [string]$StackTraceMessage) {
@@ -146,6 +168,15 @@ function Save-ExceptionMessage([xml]$FitNesseResults, [string]$Message, [string]
 	$stackTraceXml = [xml]"<stackTrace><![CDATA[$StackTraceMessage]]></stackTrace>"
 	AddNode -Base $FitNesseResults -Source $exceptionXml -TargetXPath $xPath
 	AddNode -Base $FitNesseResults -Source $stackTraceXml -TargetXPath $xPath
+}
+
+function Test-AllTestsPassed([string]$FitNesseResults) {
+	$counts = ([xml]$FitNesseResults).testResults.finalCounts
+	return (([int]$counts.wrong + [int]$counts.exceptions) -eq 0) -and ([int]$counts.right -gt 0)
+}
+
+function Test-MissedError([xml]$FitNesseResults) {
+	return (!$FitNesseResults.testResults.result) -and (!$FitNesseResults.testResults.executionLog.exception)
 }
 
 # Export all functions with a dash in them.

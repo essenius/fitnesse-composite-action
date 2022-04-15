@@ -2,6 +2,20 @@
 param()
 Get-Module -Name "FitNesseConvert" | Remove-Module
 Import-Module -Name "$PSScriptRoot/FitNesseConvert.psm1"
+
+#Load TEST environment variables if they are there
+$testEnvironmentPath = "env.txt"
+if (Test-Path -Path $testEnvironmentPath) {
+    $content = Get-Content -Path $testEnvironmentPath -Raw
+    $testEnvironmentTable = ConvertFrom-StringData -StringData $content
+    foreach($item in $testEnvironmentTable) { 
+        foreach($entry in $item.GetEnumerator()) {
+            if ($entry.Key.StartsWith("TEST")) {
+                Set-EnvironmentVariable -Key $entry.Key -Value $entry.Value 
+            }
+        } 
+    }
+}
 $rawResultsPath = "result.xml"
 $content = Get-Content -Path "$rawResultsPath"
 [xml]$testResult = [xml](Read-Xml -RawInput $content)
