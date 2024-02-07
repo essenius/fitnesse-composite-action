@@ -46,7 +46,7 @@ runs:
   steps:
     - name: Download FitNesse
       shell: bash
-      run: curl -o ${{inputs.fitnesse-folder}}/fitnesse.jar "http://www.fitnesse.org/fitnesse-standalone.jar?responder=releaseDownload&release=${{inputs.fitnesse-release}}"
+      run: wget -O ${{inputs.fitnesse-folder}}/fitnesse.jar "https://github.com/fitnesse/fitnessedotorg/raw/master/releases/${{inputs.fitnesse-release}}/fitnesse-standalone.jar"
     #  assumes that dotnet is already there
     - name: Download FitSharp
       shell: bash
