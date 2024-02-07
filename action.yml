@@ -20,7 +20,7 @@ inputs:
   fitnesse-release:
     description: 'FitNesse release number'
     required: false
-    default: 20220319
+    default: 20231203
   fitnesse-folder:
     description: 'Main FitNesse folder'
     required: false
@@ -28,7 +28,7 @@ inputs:
   fitsharp-release:
     description: 'FitSharp release number'
     required: false
-    default: 2022.3.29
+    default: 2022.11.13
   fitsharp-folder:
     description: 'FitSharp Folder'
     required: false
