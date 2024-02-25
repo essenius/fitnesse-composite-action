@@ -20,7 +20,7 @@ inputs:
   fitnesse-release:
     description: 'FitNesse release number'
     required: false
-    default: 20231203
+    default: 20240219
   fitnesse-folder:
     description: 'Main FitNesse folder'
     required: false
