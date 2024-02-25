@@ -18,7 +18,7 @@ Optional|Description|Default value
 :--|:--|:--
 include-html|whether or not to include the test details in suites (1.)|true 
 fitnesse-port|the port that the FitNesse wiki runs at (2.)|8080
-fitnesse-release|the FitNesse release to use|20231203
+fitnesse-release|the FitNesse release to use|20240219
 fitsharp-release|the FitSharp release to use|2022.11.13
 fitsharp-folder|the folder where FitSharp needs to end up|${{github.workspace}}/fitsharp
 test-result-folder|the folder where the test result needs to end up|${{github.workspace}}/testresult
